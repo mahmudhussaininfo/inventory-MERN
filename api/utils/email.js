@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 
-const sendEmail = async (to, sub, text) => {
+const sendEmail = async (to, sub, htmlContent) => {
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -9,7 +9,6 @@ const sendEmail = async (to, sub, text) => {
       user: process.env.EMAIL_USER, // generated ethereal user
       pass: process.env.EMAIL_PASS, // generated ethereal password
     },
-
     tls: {
       rejectUnauthorized: false,
     },
@@ -19,7 +18,7 @@ const sendEmail = async (to, sub, text) => {
     from: `Enventory MERN <${process.env.EMAIL_USER}>`,
     to: to,
     subject: sub,
-    text: text,
+    html: htmlContent,
   };
 
   return await transporter.sendMail(mailOptions);

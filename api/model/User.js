@@ -22,11 +22,18 @@ const userSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
-      required: true,
     },
     photo: {
       type: String,
       default: null,
+    },
+    otp: {
+      type: Number,
+      default: 0,
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
     },
     createdDate: {
       type: Date,
