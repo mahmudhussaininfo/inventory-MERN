@@ -1,19 +1,21 @@
-import Brand from "../model/Brand.js";
+import Category from "../model/Category.js";
 import asyncHandler from "express-async-handler";
 
-// get all Brands
-export const getAllBrands = asyncHandler(async (req, res) => {
-  const brands = await Brand.find().select("_id name");
-  if (!brands || brands.length === 0) {
-    return res.status(400).json({ success: false, message: "No Brand Found" });
+// get all Cagetorys
+export const getAllCategory = asyncHandler(async (req, res) => {
+  const category = await Category.find().select("_id name");
+  if (!category || category.length === 0) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No category Found" });
   }
   return res
     .status(200)
-    .json({ success: true, message: "Brand fetch success", brands });
+    .json({ success: true, message: "category fetch success", category });
 });
 
-// register Brand
-export const registerBrand = asyncHandler(async (req, res) => {
+// register Cagetory
+export const registerCategory = asyncHandler(async (req, res) => {
   const { name } = req.body;
   const { email } = req.user;
 
@@ -25,60 +27,61 @@ export const registerBrand = asyncHandler(async (req, res) => {
     });
   }
 
-  // check if user exist
-  const existingBrand = await Brand.findOne({ name });
-  if (existingBrand) {
+  // check if category exist
+  const existingCategory = await Category.findOne({ name });
+  if (existingCategory) {
     return res.status(400).json({
       status: false,
-      message: "Brand already exist",
+      message: "Category already exist",
     });
   }
 
-  // create Brand
-  const brand = await Brand.create({
+  // create Category
+  const category = await Category.create({
     userEmail: email,
     name,
   });
 
   return res.status(201).json({
     status: true,
-    message: "Brand created successfully",
-    brand,
+    message: "category created successfully",
+    category,
   });
 });
 
-// update brand
-export const updateBrand = asyncHandler(async (req, res) => {
+// update Category
+export const updateCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const reqBody = req.body;
 
-  const brand = await Brand.findByIdAndUpdate({ _id: id }, reqBody, {
+  const category = await Category.findByIdAndUpdate({ _id: id }, reqBody, {
     new: true,
   });
 
-  if (!brand) {
+  if (!category) {
     return res.status(400).json({
       status: false,
-      message: "Brand id not found",
+      message: "category id not found",
     });
   }
 
   return res.status(200).json({
     status: true,
-    message: "Brand updated successfully",
-    brand,
+    message: "category updated successfully",
+    category,
   });
 });
 
-// brand list
-export const brandList = asyncHandler(async (req, res) => {
+// category list
+export const categoryList = asyncHandler(async (req, res) => {
   const { email } = req.user;
   const pageNo = Number(req.params.pageNo) || 1;
   const perPage = Number(req.params.perPage) || 10;
   const keyword = req.params.keyword || "";
+
   const skip = (pageNo - 1) * perPage;
 
-  let matchCondition = [
+  const matchStage = [
     {
       userEmail: email,
     },
@@ -89,15 +92,15 @@ export const brandList = asyncHandler(async (req, res) => {
       $regex: keyword,
       $options: "i",
     };
-    matchCondition.push({
+    matchStage.push({
       name: searchRegex,
     });
   }
 
-  const brands = await Brand.aggregate([
+  const category = await Category.aggregate([
     {
       $match: {
-        $and: matchCondition,
+        $and: matchStage,
       },
     },
     {
@@ -118,8 +121,7 @@ export const brandList = asyncHandler(async (req, res) => {
       },
     },
   ]);
-
   return res
     .status(200)
-    .json({ success: true, message: "Brand fetch success", brands });
+    .json({ success: true, message: "Category fetch success", category });
 });
