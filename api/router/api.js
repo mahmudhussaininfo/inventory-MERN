@@ -3,6 +3,7 @@ import * as userController from "../controller/userController.js";
 import * as brandController from "../controller/brandController.js";
 import * as categoryController from "../controller/categoryController.js";
 import * as supplierController from "../controller/supplierController.js";
+import * as customerController from "../controller/customerController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -64,4 +65,16 @@ router.post(
   supplierController.updateSupply
 );
 
+// customer
+router.get("/customers", authMiddleware, customerController.getAllCustomer);
+router.post(
+  "/create-customer",
+  authMiddleware,
+  customerController.registerCustomer
+);
+router.post(
+  "/updateCustomer/:id",
+  authMiddleware,
+  customerController.updateCustomer
+);
 export default router;

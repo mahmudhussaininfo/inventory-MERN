@@ -109,6 +109,12 @@ export const supplierList = asyncHandler(async (req, res) => {
             $options: "i",
           },
         },
+        {
+          mobile: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
       ],
     }),
   };
