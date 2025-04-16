@@ -33,6 +33,6 @@ const expanseDataSchema = new mongoose.Schema(
   }
 );
 
-const ExpanseData = mongoose.model("expanseData", expanseDataSchema);
+const ExpanseData = mongoose.model("expansedata", expanseDataSchema);
 
 export default ExpanseData;

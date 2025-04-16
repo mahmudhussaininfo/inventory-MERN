@@ -3,15 +3,44 @@ import asyncHandler from "express-async-handler";
 
 // get all expanseDatas
 export const getAllexpanseData = asyncHandler(async (req, res) => {
-  const expanseData = await ExpanseData.find();
+  const expanseData = await ExpanseData.aggregate([
+    {
+      $lookup: {
+        from: "expansetypes",
+        localField: "expanseId",
+        foreignField: "_id",
+        as: "expanseDetails",
+      },
+    },
+    {
+      $unwind: {
+        path: "$expanseDetails",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        amount: 1,
+        note: 1,
+        "expanseDetails._id": 1,
+        "expanseDetails.name": 1,
+      },
+    },
+  ]);
+
   if (!expanseData || expanseData.length === 0) {
     return res
       .status(400)
       .json({ success: false, message: "No expanseData Found" });
   }
-  return res
-    .status(200)
-    .json({ success: true, message: "expanseData fetch success", expanseData });
+  return res.status(200).json({
+    success: true,
+    message: "expanseData fetch success",
+    expanseData,
+  });
 });
 
 // register expanseData

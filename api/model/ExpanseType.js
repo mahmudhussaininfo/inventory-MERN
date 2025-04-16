@@ -23,6 +23,6 @@ const expanseTypeSchema = new mongoose.Schema(
   }
 );
 
-const ExpanseType = mongoose.model("ExpanseType", expanseTypeSchema);
+const ExpanseType = mongoose.model("expansetypes", expanseTypeSchema);
 
 export default ExpanseType;
