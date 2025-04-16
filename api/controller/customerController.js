@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 
 // get all Customers
 export const getAllCustomer = asyncHandler(async (req, res) => {
-  const customer = await Customer.find().select("_id name");
+  const customer = await Customer.find();
   if (!customer || customer.length === 0) {
     return res
       .status(400)
@@ -81,5 +81,54 @@ export const updateCustomer = asyncHandler(async (req, res) => {
     status: true,
     message: "Customer updated successfully",
     customer,
+  });
+});
+
+// customer listing
+export const customerList = asyncHandler(async (req, res) => {
+  const { email } = req.user;
+  const perPage = Number(req.params.perPage) || 1;
+  const pageNo = Number(req.params.pageNo) || 10;
+  const keyword = req.params.keyword || "";
+
+  const skip = (pageNo - 1) * perPage;
+
+  const matchStage = {
+    userEmail: email,
+    ...(keyword && {
+      $or: [
+        {
+          name: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+        {
+          address: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+        {
+          mobile: {
+            $regex: keyword,
+          },
+        },
+      ],
+    }),
+  };
+
+  const [total, customers] = await Promise.all([
+    Customer.countDocuments(matchStage),
+    Customer.find(matchStage).skip(skip).limit(perPage),
+  ]);
+
+  return res.status(200).json({
+    success: true,
+    message: "customers fetch success",
+    data: {
+      total,
+      customers,
+    },
   });
 });

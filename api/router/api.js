@@ -4,6 +4,8 @@ import * as brandController from "../controller/brandController.js";
 import * as categoryController from "../controller/categoryController.js";
 import * as supplierController from "../controller/supplierController.js";
 import * as customerController from "../controller/customerController.js";
+import * as expanseTypeController from "../controller/expanseController.js";
+import * as expanseDataController from "../controller/expanseDataController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -76,5 +78,54 @@ router.post(
   "/updateCustomer/:id",
   authMiddleware,
   customerController.updateCustomer
+);
+router.get(
+  "/customer/:pageNo/:perPage/:keyword",
+  authMiddleware,
+  customerController.customerList
+);
+
+// expanse Type
+router.get(
+  "/expanseTypes",
+  authMiddleware,
+  expanseTypeController.getAllExpanseType
+);
+router.post(
+  "/create-expanseType",
+  authMiddleware,
+  expanseTypeController.registerExpanseType
+);
+router.post(
+  "/updateExpanseType/:id",
+  authMiddleware,
+  expanseTypeController.updateExpanseType
+);
+router.get(
+  "/expanseType/:pageNo/:perPage/:keyword",
+  authMiddleware,
+  expanseTypeController.expanseTypeList
+);
+
+// expanse Data
+router.get(
+  "/expanseData",
+  authMiddleware,
+  expanseDataController.getAllexpanseData
+);
+router.post(
+  "/create-expanseData",
+  authMiddleware,
+  expanseDataController.registerexpanseData
+);
+router.post(
+  "/updateExpanseData/:id",
+  authMiddleware,
+  expanseDataController.updateExpanseData
+);
+router.get(
+  "/expanseData/:pageNo/:perPage/:keyword",
+  authMiddleware,
+  expanseDataController.expanseDataList
 );
 export default router;

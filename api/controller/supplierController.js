@@ -112,7 +112,6 @@ export const supplierList = asyncHandler(async (req, res) => {
         {
           mobile: {
             $regex: keyword,
-            $options: "i",
           },
         },
       ],
