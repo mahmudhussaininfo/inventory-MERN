@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
-// expanseDataSchema
-const expanseDataSchema = new mongoose.Schema(
+const productSchema = new mongoose.Schema(
   {
     userEmail: {
       type: String,
@@ -12,15 +11,19 @@ const expanseDataSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    amount: {
-      type: Number,
-    },
-    note: {
+    unit: {
       type: String,
     },
-    expanseId: {
+    details: {
+      type: String,
+    },
+    categoryId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "expansetypes",
+      ref: "categories",
+    },
+    brandId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "brands",
     },
     createdDate: {
       type: Date,
@@ -33,6 +36,6 @@ const expanseDataSchema = new mongoose.Schema(
   }
 );
 
-const ExpanseData = mongoose.model("expansedata", expanseDataSchema);
+const Product = mongoose.model("products", productSchema);
 
-export default ExpanseData;
+export default Product;

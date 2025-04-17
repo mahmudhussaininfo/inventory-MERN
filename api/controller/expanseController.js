@@ -85,15 +85,16 @@ export const expanseTypeList = asyncHandler(async (req, res) => {
 
   const skip = (pageNo - 1) * perPage;
 
-  const matchStage = {
+  let matchStage = {
     userEmail: email,
-    ...(keyword && {
-      name: {
-        $regex: keyword,
-        $options: "i",
-      },
-    }),
   };
+
+  if (keyword && keyword !== "0") {
+    matchStage.name = {
+      $regex: keyword,
+      $options: "i",
+    };
+  }
 
   const [total, expanseTypes] = await Promise.all([
     ExpanseType.countDocuments(matchStage),

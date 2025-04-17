@@ -78,27 +78,20 @@ export const brandList = asyncHandler(async (req, res) => {
   const keyword = req.params.keyword || "";
   const skip = (pageNo - 1) * perPage;
 
-  let matchCondition = [
-    {
-      userEmail: email,
-    },
-  ];
+  let matchCondition = {
+    userEmail: email,
+  };
 
-  if (keyword !== 0) {
-    const searchRegex = {
+  if (keyword && keyword !== "0") {
+    matchCondition.name = {
       $regex: keyword,
       $options: "i",
     };
-    matchCondition.push({
-      name: searchRegex,
-    });
   }
 
   const brands = await Brand.aggregate([
     {
-      $match: {
-        $and: matchCondition,
-      },
+      $match: matchCondition,
     },
     {
       $facet: {

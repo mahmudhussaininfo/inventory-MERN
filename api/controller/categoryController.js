@@ -81,27 +81,20 @@ export const categoryList = asyncHandler(async (req, res) => {
 
   const skip = (pageNo - 1) * perPage;
 
-  const matchStage = [
-    {
-      userEmail: email,
-    },
-  ];
+  let matchStage = {
+    userEmail: email,
+  };
 
-  if (keyword !== 0) {
-    const searchRegex = {
+  if (keyword && keyword !== "0") {
+    matchStage.name = {
       $regex: keyword,
       $options: "i",
     };
-    matchStage.push({
-      name: searchRegex,
-    });
   }
 
   const category = await Category.aggregate([
     {
-      $match: {
-        $and: matchStage,
-      },
+      $match: matchStage,
     },
     {
       $facet: {

@@ -6,6 +6,7 @@ import * as supplierController from "../controller/supplierController.js";
 import * as customerController from "../controller/customerController.js";
 import * as expanseTypeController from "../controller/expanseController.js";
 import * as expanseDataController from "../controller/expanseDataController.js";
+import * as productController from "../controller/productController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -24,7 +25,7 @@ router.get("/user", userController.getAllUsers);
 // brands
 router.get("/brands", authMiddleware, brandController.getAllBrands);
 router.get(
-  "/brands/:pageNo/:perPage/:keyword",
+  "/brands/:pageNo/:perPage/:keyword?",
   authMiddleware,
   brandController.brandList
 );
@@ -128,4 +129,18 @@ router.get(
   authMiddleware,
   expanseDataController.expanseDataList
 );
+
+// =========================== Product ==================================
+router.get("/products", authMiddleware, productController.getAllProduct);
+router.post(
+  "/create-product",
+  authMiddleware,
+  productController.registerProduct
+);
+router.post(
+  "/updateProduct/:id",
+  authMiddleware,
+  productController.updateProduct
+);
+
 export default router;
