@@ -9,9 +9,13 @@ import * as expanseDataController from "../controller/expanseDataController.js";
 import * as productController from "../controller/productController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
+/**
+ * router init
+ */
+
 const router = express.Router();
 
-//user
+// ================================== user ====================================
 router.post("/create-user", userController.registerUser);
 router.post("/login-user", userController.loginUser);
 router.post("/update-user", authMiddleware, userController.updateUser);
@@ -22,7 +26,7 @@ router.post("/verifyOtp", authMiddleware, userController.verifyOtp);
 router.post("/resetPassword", authMiddleware, userController.resetPassword);
 router.get("/user", userController.getAllUsers);
 
-// brands
+// ================================== brands ==================================
 router.get("/brands", authMiddleware, brandController.getAllBrands);
 router.get(
   "/brands/:pageNo/:perPage/:keyword?",
@@ -32,7 +36,7 @@ router.get(
 router.post("/create-brand", authMiddleware, brandController.registerBrand);
 router.post("/updateBrand/:id", authMiddleware, brandController.updateBrand);
 
-// category
+// ================================== category ====================================
 router.get("/category", authMiddleware, categoryController.getAllCategory);
 router.post(
   "/create-category",
@@ -50,7 +54,7 @@ router.get(
   categoryController.categoryList
 );
 
-// supplier
+// ============================= supplier ======================================
 router.get("/suppliers", authMiddleware, supplierController.getAllsupplier);
 router.get(
   "/supplier/:pageNo/:perPage/:keyword",
@@ -68,7 +72,7 @@ router.post(
   supplierController.updateSupply
 );
 
-// customer
+// ==================================== customer ==================================
 router.get("/customers", authMiddleware, customerController.getAllCustomer);
 router.post(
   "/create-customer",
@@ -86,7 +90,7 @@ router.get(
   customerController.customerList
 );
 
-// expanse Type
+// =============================== expanse Type ===================================
 router.get(
   "/expanseTypes",
   authMiddleware,
@@ -108,7 +112,7 @@ router.get(
   expanseTypeController.expanseTypeList
 );
 
-// expanse Data
+// ==================================== expanse Data ================================
 router.get(
   "/expanseData",
   authMiddleware,
@@ -130,7 +134,7 @@ router.get(
   expanseDataController.expanseDataList
 );
 
-// =========================== Product ==================================
+// ================================= Product =========================================
 router.get("/products", authMiddleware, productController.getAllProduct);
 router.post(
   "/create-product",
@@ -141,6 +145,11 @@ router.post(
   "/updateProduct/:id",
   authMiddleware,
   productController.updateProduct
+);
+router.get(
+  "/products/:pageNo/:perPage/:keyword",
+  authMiddleware,
+  productController.ProductList
 );
 
 export default router;

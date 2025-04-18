@@ -7,7 +7,7 @@ const mongoDbConnection = async () => {
     });
     console.log(`mongodb connected successfully`.bgGreen.bold);
   } catch (error) {
-    console.log(`error.message`.bgRed.bold);
+    console.log(error.message.bgRed.bold);
   }
 };
 

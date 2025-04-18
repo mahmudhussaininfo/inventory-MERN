@@ -98,7 +98,8 @@ export const customerList = asyncHandler(async (req, res) => {
   };
 
   if (keyword && keyword !== "0") {
-    matchStage && {
+    matchStage = {
+      ...matchStage,
       $or: [
         {
           name: {

@@ -94,36 +94,70 @@ export const ProductList = asyncHandler(async (req, res) => {
     userEmail: email,
   };
 
-  if (keyword && keyword !== "0") {
-    matchStage && {
-      $or: [
-        {
-          name: {
-            $regex: keyword,
-            $options: "i",
-          },
-        },
-        {
-          note: {
-            $regex: keyword,
-            $options: "i",
-          },
-        },
-      ],
-    };
-  }
-
-  const [total, Products] = await Promise.all([
-    Product.countDocuments(matchStage),
-    Product.find(matchStage).populate("expanseId").skip(skip).limit(perPage),
+  const products = await Product.aggregate([
+    {
+      $match: matchStage,
+    },
+    {
+      $lookup: {
+        from: "categories",
+        localField: "categoryId",
+        foreignField: "_id",
+        as: "category",
+      },
+    },
+    {
+      $lookup: {
+        from: "brands",
+        localField: "brandId",
+        foreignField: "_id",
+        as: "brand",
+      },
+    },
+    {
+      $unwind: {
+        path: "$category",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $unwind: {
+        path: "$brand",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $match: {
+        ...matchStage,
+        ...(keyword &&
+          keyword !== "0" && {
+            $or: [
+              { name: { $regex: keyword, $options: "i" } },
+              { unit: { $regex: keyword, $options: "i" } },
+              { details: { $regex: keyword, $options: "i" } },
+              { "category.name": { $regex: keyword, $options: "i" } },
+              { "brand.name": { $regex: keyword, $options: "i" } },
+            ],
+          }),
+      },
+    },
+    {
+      $facet: {
+        total: [{ $count: "count" }],
+        products: [{ $skip: skip }, { $limit: perPage }],
+      },
+    },
   ]);
+
+  const total = products[0]?.total[0]?.count || 0;
+  const productList = products[0]?.products || [];
 
   return res.status(200).json({
     success: true,
     message: "Product fetch success",
     data: {
       total,
-      Products,
+      products: productList,
     },
   });
 });
