@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 // supplierSchema
-const purchaseSchema = new mongoose.Schema(
+const purchaseProductSchema = new mongoose.Schema(
   {
     userEmail: {
       type: String,
@@ -35,6 +35,9 @@ const purchaseSchema = new mongoose.Schema(
   }
 );
 
-const Purchase = mongoose.model("purchases", purchaseSchema);
+const PurchaseProduct = mongoose.model(
+  "purchasesproducts",
+  purchaseProductSchema
+);
 
-export default Purchase;
+export default PurchaseProduct;

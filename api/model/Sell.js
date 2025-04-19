@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
-const purchaseSchema = new mongoose.Schema(
+// sellSchema
+const sellSchema = new mongoose.Schema(
   {
     userEmail: {
       type: String,
@@ -24,9 +25,9 @@ const purchaseSchema = new mongoose.Schema(
     grandTotal: {
       type: Number,
     },
-    supplierId: {
+    customerId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "suppliers",
+      ref: "customers",
     },
     createdDate: {
       type: Date,
@@ -39,6 +40,6 @@ const purchaseSchema = new mongoose.Schema(
   }
 );
 
-const Purchase = mongoose.model("purchases", purchaseSchema);
+const Sell = mongoose.model("sell", sellSchema);
 
-export default Purchase;
+export default Sell;

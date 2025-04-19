@@ -1,32 +1,28 @@
 import mongoose from "mongoose";
 
-const purchaseSchema = new mongoose.Schema(
+// sellSchema
+const sellSchema = new mongoose.Schema(
   {
     userEmail: {
       type: String,
       required: true,
     },
-    note: {
-      type: String,
-    },
-    vatTax: {
+    qty: {
       type: Number,
     },
-    disCount: {
+    unitCost: {
       type: Number,
     },
-    otherCost: {
+    total: {
       type: Number,
     },
-    shippingCost: {
-      type: Number,
-    },
-    grandTotal: {
-      type: Number,
-    },
-    supplierId: {
+    sellId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "suppliers",
+      ref: "sell",
+    },
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "products",
     },
     createdDate: {
       type: Date,
@@ -39,6 +35,6 @@ const purchaseSchema = new mongoose.Schema(
   }
 );
 
-const Purchase = mongoose.model("purchases", purchaseSchema);
+const SellProduct = mongoose.model("sellproducts", sellSchema);
 
-export default Purchase;
+export default SellProduct;
