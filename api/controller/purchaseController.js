@@ -41,7 +41,7 @@ export const createPurchase = async (req, res) => {
     // Second DataBase for purchaseProducts
     const childCreated = [];
 
-    childData.forEach(async (item) => {
+    for (const item of childData) {
       const childPayload = {
         ...item,
         purchaseId: parentCreated._id,
@@ -52,7 +52,7 @@ export const createPurchase = async (req, res) => {
         session,
       });
       childCreated.push(created);
-    });
+    }
 
     // Transection Success
     await session.commitTransaction();
@@ -146,3 +146,54 @@ export const purchaseList = asyncHandler(async (req, res) => {
     },
   });
 });
+
+// Delete Purchase
+export const deletePurchase = async (req, res) => {
+  // create Transetion session
+  const session = await mongoose.startSession();
+  try {
+    // start Transection
+    await session.startTransaction();
+    const { id } = req.params;
+
+    const parentPuchase = await ParentPurchase.findByIdAndDelete(
+      {
+        _id: id,
+      },
+      { session }
+    );
+
+    if (!parentPuchase) {
+      return res.status(400).json({
+        success: false,
+        message: "Parent Purchase Not Found",
+      });
+    }
+
+    // delete childs
+    await ChildPurchase.deleteMany(
+      {
+        purchaseId: id,
+      },
+      { session }
+    );
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(200).json({
+      success: true,
+      message: "Purchase deleted successfully",
+    });
+  } catch (error) {
+    // Abort the transaction in case of an error
+    await session.abortTransaction();
+    session.endSession();
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

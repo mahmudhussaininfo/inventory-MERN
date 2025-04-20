@@ -151,3 +151,56 @@ export const returnDataList = asyncHandler(async (req, res) => {
     },
   });
 });
+
+// Delete Retrun
+export const deleteReturn = async (req, res) => {
+  // create Transetion session
+  const session = await mongoose.startSession();
+  try {
+    // start Transection
+    await session.startTransaction();
+    const { id } = req.params;
+
+    const parentReturn = await ParentReturn.findByIdAndDelete(
+      {
+        _id: id,
+      },
+      { session }
+    );
+
+    if (!parentReturn) {
+      return res.status(400).json({
+        success: false,
+        message: "Parent Return Not Found",
+      });
+    }
+
+    // delete childs
+    const childReturn = await ChildReturn.deleteMany(
+      {
+        returnId: id,
+      },
+      { session }
+    );
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(200).json({
+      success: true,
+      message: "Return deleted successfully",
+      parentReturn,
+      childReturn,
+    });
+  } catch (error) {
+    // Abort the transaction in case of an error
+    await session.abortTransaction();
+    session.endSession();
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

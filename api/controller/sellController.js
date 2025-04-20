@@ -149,3 +149,56 @@ export const sellList = asyncHandler(async (req, res) => {
     },
   });
 });
+
+// Delete Sell
+export const deleteSell = async (req, res) => {
+  // create Transetion session
+  const session = await mongoose.startSession();
+  try {
+    // start Transection
+    await session.startTransaction();
+    const { id } = req.params;
+
+    const parentSell = await ParentSell.findByIdAndDelete(
+      {
+        _id: id,
+      },
+      { session }
+    );
+
+    if (!parentSell) {
+      return res.status(400).json({
+        success: false,
+        message: "Parent Sell Not Found",
+      });
+    }
+
+    // delete childs
+    const childSell = await ChildSell.deleteMany(
+      {
+        sellId: id,
+      },
+      { session }
+    );
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(200).json({
+      success: true,
+      message: "Sell deleted successfully",
+      parentSell,
+      childSell,
+    });
+  } catch (error) {
+    // Abort the transaction in case of an error
+    await session.abortTransaction();
+    session.endSession();
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

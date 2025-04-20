@@ -157,6 +157,11 @@ router.get(
 
 // ========================== Hybrid PurChase ===================================
 router.get("/purchases", authMiddleware, purchaseController.getAllPurchase);
+router.delete(
+  "/purchase-delete/:id",
+  authMiddleware,
+  purchaseController.deletePurchase
+);
 router.post(
   "/create-purchase",
   authMiddleware,
@@ -176,6 +181,7 @@ router.get(
   authMiddleware,
   sellController.sellList
 );
+router.delete("/sell-delete/:id", authMiddleware, sellController.deleteSell);
 
 //======================= hybrid return =================================
 router.get("/return", authMiddleware, returnController.getAllReturn);
@@ -184,6 +190,11 @@ router.get(
   "/return/:pageNo/:perPage/:keyword",
   authMiddleware,
   returnController.returnDataList
+);
+router.delete(
+  "/return-delete/:id",
+  authMiddleware,
+  returnController.deleteReturn
 );
 
 export default router;
