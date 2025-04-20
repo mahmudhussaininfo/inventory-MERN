@@ -9,6 +9,7 @@ import * as expanseDataController from "../controller/expanseDataController.js";
 import * as productController from "../controller/productController.js";
 import * as purchaseController from "../controller/purchaseController.js";
 import * as sellController from "../controller/sellController.js";
+import * as returnController from "../controller/returnController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 /**
@@ -168,6 +169,21 @@ router.get(
 );
 
 //======================= hybrid sell =================================
+router.get("/sell", authMiddleware, sellController.getAllSell);
 router.post("/create-sell", authMiddleware, sellController.createSell);
+router.get(
+  "/sell/:pageNo/:perPage/:keyword",
+  authMiddleware,
+  sellController.sellList
+);
+
+//======================= hybrid return =================================
+router.get("/return", authMiddleware, returnController.getAllReturn);
+router.post("/create-return", authMiddleware, returnController.createReturn);
+router.get(
+  "/return/:pageNo/:perPage/:keyword",
+  authMiddleware,
+  returnController.returnDataList
+);
 
 export default router;

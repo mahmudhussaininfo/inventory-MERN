@@ -1,23 +1,25 @@
-import ParentSell from "../model/Sell.js";
-import ChildSell from "../model/SellProduct.js";
+import ParentReturn from "../model/ReturnData.js";
+import ChildReturn from "../model/ReturnProductData.js";
 import mongoose from "mongoose";
 import asyncHandler from "express-async-handler";
 
-// get Sell
-export const getAllSell = asyncHandler(async (req, res) => {
-  const sell = await ParentSell.find();
-  if (!sell || sell.length === 0) {
-    return res.status(400).json({ success: false, message: "No Sell Found" });
+// get Return
+export const getAllReturn = asyncHandler(async (req, res) => {
+  const returnData = await ParentReturn.find();
+  if (!returnData || returnData.length === 0) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No ReturnData Found" });
   }
   return res.status(200).json({
     success: true,
-    message: "Sell fetch success",
-    sell,
+    message: "ReturnData fetch success",
+    returnData,
   });
 });
 
-// create sell parant & child
-export const createSell = async (req, res) => {
+// create Return parant & child
+export const createReturn = async (req, res) => {
   const session = await mongoose.startSession();
 
   try {
@@ -31,21 +33,21 @@ export const createSell = async (req, res) => {
       userEmail: email,
     };
 
-    const [parentCreated] = await ParentSell.create([parentPayload], {
+    const [parentCreated] = await ParentReturn.create([parentPayload], {
       session,
     });
 
-    // second database for childSell
+    // second database for childReturn
     const child = [];
 
-    for (const items of childData) {
+    for (const item of childData) {
       const childPayload = {
-        ...items,
-        sellId: parentCreated._id,
+        ...item,
+        returnId: parentCreated._id,
         userEmail: email,
       };
 
-      const [childCreated] = await ChildSell.create([childPayload], {
+      const [childCreated] = await ChildReturn.create([childPayload], {
         session,
       });
 
@@ -58,9 +60,9 @@ export const createSell = async (req, res) => {
 
     return res.status(201).json({
       status: "success",
-      message: "sell Created successfully",
-      parentSell: parentCreated,
-      chilSell: child,
+      message: "Return Created successfully",
+      parentReturn: parentCreated,
+      childReturn: child,
     });
   } catch (error) {
     await session.abortTransaction();
@@ -72,8 +74,8 @@ export const createSell = async (req, res) => {
   }
 };
 
-// list Sell
-export const sellList = asyncHandler(async (req, res) => {
+// list Return
+export const returnDataList = asyncHandler(async (req, res) => {
   const { email } = req.user;
   const pageNo = Number(req.params.pageNo) || 1;
   const perPage = Number(req.params.perPage) || 5;
@@ -85,7 +87,7 @@ export const sellList = asyncHandler(async (req, res) => {
     userEmail: email,
   };
 
-  const sell = await ParentSell.aggregate([
+  const returnData = await ParentReturn.aggregate([
     {
       $match: matchStage,
     },
@@ -132,20 +134,20 @@ export const sellList = asyncHandler(async (req, res) => {
     {
       $facet: {
         total: [{ $count: "count" }],
-        sell: [{ $skip: skip }, { $limit: perPage }],
+        returnData: [{ $skip: skip }, { $limit: perPage }],
       },
     },
   ]);
 
-  const Total = sell[0]?.total[0]?.count || 0;
-  const sellLists = sell[0]?.sell || [];
+  const Total = returnData[0]?.total[0]?.count || 0;
+  const returnDataLists = returnData[0]?.returnData || [];
 
   return res.status(200).json({
     success: true,
-    message: "sell fetch success",
+    message: "ReturnData list fetch success",
     data: {
       Total,
-      sellLists,
+      returnDataLists,
     },
   });
 });

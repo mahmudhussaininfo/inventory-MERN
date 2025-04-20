@@ -41,7 +41,7 @@ export const createPurchase = async (req, res) => {
     // Second DataBase for purchaseProducts
     const childCreated = [];
 
-    for (const item in childData) {
+    childData.forEach(async (item) => {
       const childPayload = {
         ...item,
         purchaseId: parentCreated._id,
@@ -52,7 +52,7 @@ export const createPurchase = async (req, res) => {
         session,
       });
       childCreated.push(created);
-    }
+    });
 
     // Transection Success
     await session.commitTransaction();
