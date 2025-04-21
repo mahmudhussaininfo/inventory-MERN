@@ -1,5 +1,8 @@
 import Brand from "../model/Brand.js";
 import asyncHandler from "express-async-handler";
+import mongoose from "mongoose";
+import { checkAssociateService } from "../services/checkAssociateService.js";
+import Product from "../model/Product.js";
 
 // get all Brands
 export const getAllBrands = asyncHandler(async (req, res) => {
@@ -115,4 +118,37 @@ export const brandList = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json({ success: true, message: "Brand fetch success", brands });
+});
+
+// delete Brand
+export const deleteBrand = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const objectId = new mongoose.Types.ObjectId(id);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      status: false,
+      message: "Invalid Brand ID",
+    });
+  }
+
+  const checkAssociate = await checkAssociateService(
+    { brandId: objectId },
+    Product
+  );
+  if (checkAssociate) {
+    return res.status(404).json({
+      status: "associate",
+      message: "Brand is associated with a Product cannot be deleted",
+    });
+  }
+  const result = await Brand.findByIdAndDelete(id);
+  if (!result) {
+    return res.status(404).json({ status: false, message: "Brand Not Found" });
+  }
+
+  return res
+    .status(200)
+    .json({ status: true, message: "Delete Brand Success", result });
 });

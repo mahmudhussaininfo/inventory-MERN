@@ -1,5 +1,8 @@
+import mongoose from "mongoose";
 import ExpanseType from "../model/ExpanseType.js";
 import asyncHandler from "express-async-handler";
+import { checkAssociateService } from "../services/checkAssociateService.js";
+import ExpanseData from "../model/ExpanseData.js";
 
 // get all ExpanseTypes
 export const getAllExpanseType = asyncHandler(async (req, res) => {
@@ -109,4 +112,39 @@ export const expanseTypeList = asyncHandler(async (req, res) => {
       expanseTypes,
     },
   });
+});
+
+// expanseType Delete
+export const deleteExpanseType = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const objectId = new mongoose.Types.ObjectId(id);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      status: false,
+      message: "Invalid ID",
+    });
+  }
+
+  const checkAssociate = await checkAssociateService(
+    { expanseId: objectId },
+    ExpanseData
+  );
+  if (checkAssociate) {
+    return res.status(404).json({
+      status: "associate",
+      message: "expanse is associated with a ExpanseData cannot be deleted",
+    });
+  }
+  const result = await ExpanseType.findByIdAndDelete(id);
+  if (!result) {
+    return res
+      .status(404)
+      .json({ status: false, message: "expanse Not Found" });
+  }
+
+  return res
+    .status(200)
+    .json({ status: true, message: "Delete expanseType Success", result });
 });

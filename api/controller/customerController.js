@@ -1,5 +1,8 @@
+import mongoose from "mongoose";
 import Customer from "../model/Customer.js";
 import asyncHandler from "express-async-handler";
+import { checkAssociateService } from "../services/checkAssociateService.js";
+import Sell from "../model/Sell.js";
 
 // get all Customers
 export const getAllCustomer = asyncHandler(async (req, res) => {
@@ -135,4 +138,39 @@ export const customerList = asyncHandler(async (req, res) => {
       customers,
     },
   });
+});
+
+// customer Delete
+export const deleteCustomer = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const objectId = new mongoose.Types.ObjectId(id);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      status: false,
+      message: "Invalid Category ID",
+    });
+  }
+
+  const checkAssociate = await checkAssociateService(
+    { customerId: objectId },
+    Sell
+  );
+  if (checkAssociate) {
+    return res.status(404).json({
+      status: "associate",
+      message: "Customer is associated with a Sell cannot be deleted",
+    });
+  }
+  const customer = await Customer.findByIdAndDelete(id);
+  if (!customer) {
+    return res
+      .status(404)
+      .json({ status: false, message: "Customer Not Found" });
+  }
+
+  return res
+    .status(200)
+    .json({ status: true, message: "Delete Customer Success", customer });
 });

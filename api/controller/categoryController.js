@@ -1,5 +1,8 @@
 import Category from "../model/Category.js";
 import asyncHandler from "express-async-handler";
+import { checkAssociateService } from "../services/checkAssociateService.js";
+import Product from "../model/Product.js";
+import mongoose from "mongoose";
 
 // get all Cagetorys
 export const getAllCategory = asyncHandler(async (req, res) => {
@@ -117,4 +120,39 @@ export const categoryList = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json({ success: true, message: "Category fetch success", category });
+});
+
+// delete Category
+export const deleteCategory = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const objectId = new mongoose.Types.ObjectId(id);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      status: false,
+      message: "Invalid Category ID",
+    });
+  }
+
+  const checkAssociate = await checkAssociateService(
+    { categoryId: objectId },
+    Product
+  );
+  if (checkAssociate) {
+    return res.status(404).json({
+      status: "associate",
+      message: "Category is associated with a Product cannot be deleted",
+    });
+  }
+  const result = await Category.findByIdAndDelete(id);
+  if (!result) {
+    return res
+      .status(404)
+      .json({ status: false, message: "Category Not Found" });
+  }
+
+  return res
+    .status(200)
+    .json({ status: true, message: "Delete Category Success", result });
 });

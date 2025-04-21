@@ -1,5 +1,8 @@
 import Supplier from "../model/Supplier.js";
 import asyncHandler from "express-async-handler";
+import mongoose from "mongoose";
+import { checkAssociateService } from "../services/checkAssociateService.js";
+import Purchase from "../model/Purchase.js";
 
 // get all suppliers
 export const getAllsupplier = asyncHandler(async (req, res) => {
@@ -135,4 +138,39 @@ export const supplierList = asyncHandler(async (req, res) => {
       suppliers,
     },
   });
+});
+
+// Supplier Delete
+export const deleteSupplier = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const objectId = new mongoose.Types.ObjectId(id);
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      status: false,
+      message: "Invalid Category ID",
+    });
+  }
+
+  const checkAssociate = await checkAssociateService(
+    { supplierId: objectId },
+    Purchase
+  );
+  if (checkAssociate) {
+    return res.status(404).json({
+      status: "associate",
+      message: "Supplier is associated with a Purchase cannot be deleted",
+    });
+  }
+  const result = await Supplier.findByIdAndDelete(id);
+  if (!result) {
+    return res
+      .status(404)
+      .json({ status: false, message: "Supplier Not Found" });
+  }
+
+  return res
+    .status(200)
+    .json({ status: true, message: "Delete Supplier Success", result });
 });

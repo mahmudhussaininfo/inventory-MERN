@@ -38,6 +38,7 @@ router.get(
 );
 router.post("/create-brand", authMiddleware, brandController.registerBrand);
 router.post("/updateBrand/:id", authMiddleware, brandController.updateBrand);
+router.delete("/brand-delete/:id", authMiddleware, brandController.deleteBrand);
 
 // ================================== category ====================================
 router.get("/category", authMiddleware, categoryController.getAllCategory);
@@ -55,6 +56,11 @@ router.get(
   "/category/:pageNo/:perPage/:keyword",
   authMiddleware,
   categoryController.categoryList
+);
+router.delete(
+  "/delete-category/:id",
+  authMiddleware,
+  categoryController.deleteCategory
 );
 
 // ============================= supplier ======================================
@@ -74,6 +80,11 @@ router.post(
   authMiddleware,
   supplierController.updateSupply
 );
+router.delete(
+  "/delete-supplier/:id",
+  authMiddleware,
+  supplierController.deleteSupplier
+);
 
 // ==================================== customer ==================================
 router.get("/customers", authMiddleware, customerController.getAllCustomer);
@@ -91,6 +102,11 @@ router.get(
   "/customer/:pageNo/:perPage/:keyword",
   authMiddleware,
   customerController.customerList
+);
+router.delete(
+  "/delete-customer/:id",
+  authMiddleware,
+  customerController.deleteCustomer
 );
 
 // =============================== expanse Type ===================================
@@ -171,6 +187,11 @@ router.get(
   "/purchase/:pageNo/:perPage/:keyword",
   authMiddleware,
   purchaseController.purchaseList
+);
+router.delete(
+  "/purchase-delete/:id",
+  authMiddleware,
+  purchaseController.deletePurchase
 );
 
 //======================= hybrid sell =================================
