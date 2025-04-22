@@ -10,6 +10,7 @@ import * as productController from "../controller/productController.js";
 import * as purchaseController from "../controller/purchaseController.js";
 import * as sellController from "../controller/sellController.js";
 import * as returnController from "../controller/returnController.js";
+import * as reportController from "../controller/reportController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 /**
@@ -217,5 +218,8 @@ router.delete(
   authMiddleware,
   returnController.deleteReturn
 );
+
+// ================================ Expanse Report ============================
+router.post("/expanse-report", authMiddleware, reportController.expanseReport);
 
 export default router;
