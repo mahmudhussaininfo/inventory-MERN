@@ -1,5 +1,10 @@
 import Product from "../model/Product.js";
 import asyncHandler from "express-async-handler";
+import mongoose from "mongoose";
+import { checkAssociateService } from "../services/checkAssociateService.js";
+import ReturnProduct from "../model/ReturnProductData.js";
+import PurchaseProduct from "../model/PurchaseProduct.js";
+import SellProduct from "../model/SellProduct.js";
 
 // get all Products
 export const getAllProduct = asyncHandler(async (req, res) => {
@@ -161,4 +166,49 @@ export const ProductList = asyncHandler(async (req, res) => {
       products: productList,
     },
   });
+});
+
+// delete Product
+export const deleteProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      status: false,
+      message: "Invalid Product ID",
+    });
+  }
+
+  const objectId = new mongoose.Types.ObjectId(id);
+
+  const checkReturnAssociate = await checkAssociateService(
+    { productId: objectId },
+    ReturnProduct
+  );
+  const checkPurchaseAssociate = await checkAssociateService(
+    { productId: objectId },
+    PurchaseProduct
+  );
+  const checkSellAssociate = await checkAssociateService(
+    { productId: objectId },
+    SellProduct
+  );
+
+  if (checkReturnAssociate || checkPurchaseAssociate || checkSellAssociate) {
+    return res.status(409).json({
+      status: "associate",
+      message:
+        "Product is associated with a Return, Purchase or Sell cannot be deleted",
+    });
+  }
+  const result = await Product.findByIdAndDelete(id);
+  if (!result) {
+    return res
+      .status(404)
+      .json({ status: false, message: "Procuct Not Found" });
+  }
+
+  return res
+    .status(200)
+    .json({ status: true, message: "Delete Product Success", result });
 });

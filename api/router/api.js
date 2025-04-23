@@ -171,6 +171,11 @@ router.get(
   authMiddleware,
   productController.ProductList
 );
+router.delete(
+  "/delete-product/:id",
+  authMiddleware,
+  productController.deleteProduct
+);
 
 // ========================== Hybrid PurChase ===================================
 router.get("/purchases", authMiddleware, purchaseController.getAllPurchase);
@@ -221,5 +226,12 @@ router.delete(
 
 // ================================ Expanse Report ============================
 router.post("/expanse-report", authMiddleware, reportController.expanseReport);
+router.post(
+  "/purchase-report",
+  authMiddleware,
+  reportController.purchaseReport
+);
+router.post("/sales-report", authMiddleware, reportController.salesReport);
+router.post("/return-report", authMiddleware, reportController.returnReport);
 
 export default router;

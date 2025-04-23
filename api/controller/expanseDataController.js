@@ -160,3 +160,22 @@ export const expanseDataList = asyncHandler(async (req, res) => {
     },
   });
 });
+
+// Delete Expanse Data
+export const expanseDelete = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const expanseData = await ExpanseData.findByIdAndDelete(id);
+  if (!expanseData) {
+    return res.status(404).json({
+      success: false,
+      message: "expanseData not found",
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: "expanseData Delete success",
+    expanseData,
+  });
+});
