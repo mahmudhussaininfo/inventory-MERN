@@ -17,6 +17,25 @@ export const getAllCategory = asyncHandler(async (req, res) => {
     .json({ success: true, message: "category fetch success", category });
 });
 
+// categoryDetail BY ID
+export const getCategory = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Category id is not Valid" });
+  }
+  const category = await Category.findById(id);
+  if (!category || category.length === 0) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No Category Found" });
+  }
+  return res
+    .status(200)
+    .json({ success: true, message: "Category id fetch success", category });
+});
+
 // register Cagetory
 export const registerCategory = asyncHandler(async (req, res) => {
   const { name } = req.body;

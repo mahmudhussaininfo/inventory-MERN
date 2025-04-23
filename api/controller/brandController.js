@@ -15,6 +15,23 @@ export const getAllBrands = asyncHandler(async (req, res) => {
     .json({ success: true, message: "Brand fetch success", brands });
 });
 
+// brandDetail BY ID
+export const getBrand = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res
+      .status(404)
+      .json({ success: false, message: "Brand id not Valid" });
+  }
+  const brand = await Brand.findById(id);
+  if (!brand || brand.length === 0) {
+    return res.status(400).json({ success: false, message: "No Brand Found" });
+  }
+  return res
+    .status(200)
+    .json({ success: true, message: "Brand id fetch success", brand });
+});
+
 // register Brand
 export const registerBrand = asyncHandler(async (req, res) => {
   const { name } = req.body;

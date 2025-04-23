@@ -11,6 +11,7 @@ import * as purchaseController from "../controller/purchaseController.js";
 import * as sellController from "../controller/sellController.js";
 import * as returnController from "../controller/returnController.js";
 import * as reportController from "../controller/reportController.js";
+import * as summaryController from "../controller/summaryController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 /**
@@ -32,6 +33,7 @@ router.get("/user", userController.getAllUsers);
 
 // ================================== brands ==================================
 router.get("/brands", authMiddleware, brandController.getAllBrands);
+router.get("/brand/:id", authMiddleware, brandController.getBrand);
 router.get(
   "/brands/:pageNo/:perPage/:keyword?",
   authMiddleware,
@@ -43,6 +45,7 @@ router.delete("/brand-delete/:id", authMiddleware, brandController.deleteBrand);
 
 // ================================== category ====================================
 router.get("/category", authMiddleware, categoryController.getAllCategory);
+router.get("/category/:id", authMiddleware, categoryController.getCategory);
 router.post(
   "/create-category",
   authMiddleware,
@@ -224,7 +227,8 @@ router.delete(
   returnController.deleteReturn
 );
 
-// ================================ Expanse Report ============================
+// =============== Expanse Report =============
+
 router.post("/expanse-report", authMiddleware, reportController.expanseReport);
 router.post(
   "/purchase-report",
@@ -233,5 +237,20 @@ router.post(
 );
 router.post("/sales-report", authMiddleware, reportController.salesReport);
 router.post("/return-report", authMiddleware, reportController.returnReport);
+
+// =============== Sales Summary Report =============
+
+router.get("/sales-Summary", authMiddleware, summaryController.salesSummary);
+router.get(
+  "/expanse-Summary",
+  authMiddleware,
+  summaryController.expanseSummary
+);
+router.get(
+  "/purchase-Summary",
+  authMiddleware,
+  summaryController.purchaseSummary
+);
+router.get("/return-Summary", authMiddleware, summaryController.returnSummary);
 
 export default router;

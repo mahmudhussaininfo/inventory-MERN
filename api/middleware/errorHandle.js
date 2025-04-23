@@ -9,6 +9,5 @@ export const errorHandler = (error, req, res, next) => {
   res.status(status).json({
     success: false,
     message: message,
-    stack: error.stack,
   });
 };
