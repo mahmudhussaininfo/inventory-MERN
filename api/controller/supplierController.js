@@ -17,6 +17,25 @@ export const getAllsupplier = asyncHandler(async (req, res) => {
     .json({ success: true, message: "supplier fetch success", supplier });
 });
 
+// supplier BY ID
+export const getSupplier = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res
+      .status(404)
+      .json({ success: false, message: "supplier id not Valid" });
+  }
+  const supplier = await Supplier.findById(id);
+  if (!supplier || supplier.length === 0) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No supplier Found" });
+  }
+  return res
+    .status(200)
+    .json({ success: true, message: "supplier id fetch success", supplier });
+});
+
 // register Supplier
 export const registerSupplier = asyncHandler(async (req, res) => {
   const { name, supplierEmail, mobile, address } = req.body;

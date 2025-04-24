@@ -17,6 +17,29 @@ export const getAllExpanseType = asyncHandler(async (req, res) => {
     .json({ success: true, message: "expanseType fetch success", expanseType });
 });
 
+// expanse BY ID
+export const getExpanse = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res
+      .status(404)
+      .json({ success: false, message: "expanseType id not Valid" });
+  }
+  const expanseType = await ExpanseType.findById(id);
+  if (!expanseType || expanseType.length === 0) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No expanseType Found" });
+  }
+  return res
+    .status(200)
+    .json({
+      success: true,
+      message: "expanseType id fetch success",
+      expanseType,
+    });
+});
+
 // register ExpanseType
 export const registerExpanseType = asyncHandler(async (req, res) => {
   const { name } = req.body;

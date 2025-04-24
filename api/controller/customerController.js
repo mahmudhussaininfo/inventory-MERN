@@ -17,6 +17,25 @@ export const getAllCustomer = asyncHandler(async (req, res) => {
     .json({ success: true, message: "Customer fetch success", customer });
 });
 
+// customer BY ID
+export const getCustomer = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res
+      .status(404)
+      .json({ success: false, message: "customer id not Valid" });
+  }
+  const customer = await Customer.findById(id);
+  if (!customer || customer.length === 0) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No customer Found" });
+  }
+  return res
+    .status(200)
+    .json({ success: true, message: "customer id fetch success", customer });
+});
+
 // register Customer
 export const registerCustomer = asyncHandler(async (req, res) => {
   const { name, customerEmail, mobile, address } = req.body;

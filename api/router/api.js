@@ -69,6 +69,7 @@ router.delete(
 
 // ============================= supplier ======================================
 router.get("/suppliers", authMiddleware, supplierController.getAllsupplier);
+router.get("/supplier/:id", authMiddleware, supplierController.getSupplier);
 router.get(
   "/supplier/:pageNo/:perPage/:keyword",
   authMiddleware,
@@ -92,6 +93,7 @@ router.delete(
 
 // ==================================== customer ==================================
 router.get("/customers", authMiddleware, customerController.getAllCustomer);
+router.get("/customer/:id", authMiddleware, customerController.getCustomer);
 router.post(
   "/create-customer",
   authMiddleware,
@@ -119,6 +121,11 @@ router.get(
   authMiddleware,
   expanseTypeController.getAllExpanseType
 );
+router.get(
+  "/expanseType/:id",
+  authMiddleware,
+  expanseTypeController.getExpanse
+);
 router.post(
   "/create-expanseType",
   authMiddleware,
@@ -141,6 +148,11 @@ router.get(
   authMiddleware,
   expanseDataController.getAllexpanseData
 );
+router.get(
+  "/expanseData/:id",
+  authMiddleware,
+  expanseDataController.getExpanseData
+);
 router.post(
   "/create-expanseData",
   authMiddleware,
@@ -159,6 +171,7 @@ router.get(
 
 // ================================= Product =========================================
 router.get("/products", authMiddleware, productController.getAllProduct);
+router.get("/product/:id", authMiddleware, productController.getProduct);
 router.post(
   "/create-product",
   authMiddleware,

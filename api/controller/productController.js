@@ -22,6 +22,25 @@ export const getAllProduct = asyncHandler(async (req, res) => {
   });
 });
 
+// productDetail BY ID
+export const getProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res
+      .status(404)
+      .json({ success: false, message: "product id not Valid" });
+  }
+  const product = await Product.findById(id);
+  if (!product || product.length === 0) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No Product Found" });
+  }
+  return res
+    .status(200)
+    .json({ success: true, message: "Product id fetch success", product });
+});
+
 // register Product
 export const registerProduct = asyncHandler(async (req, res) => {
   const { name, brandId, categoryId, unit, details } = req.body;
